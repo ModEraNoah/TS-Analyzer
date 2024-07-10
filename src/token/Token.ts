@@ -1,3 +1,4 @@
+import { ClassContext, Context } from "../Context";
 import { getClosingBracketIndex } from "../util";
 
 export interface Token {
@@ -5,7 +6,7 @@ export interface Token {
 	startIdx: number;
 	endIdx: number;
 	getTokenEnd: (content: string) => number;
-	processToken: (context: any, content: string) => void
+	processToken: (context: Context, content: string) => void
 }
 
 export class ClassToken implements Token {
@@ -24,6 +25,8 @@ export class ClassToken implements Token {
 	}
 
 	public processToken(context: Context, content: string): void {
+		if (context.context !== "main") throw new Error("Wrong context passed to ClassToken")
+
 		let bracketIdx = content.indexOf("{", this.startIdx)
 		const classSignature = content.substring(this.startIdx, bracketIdx)
 		const splittedClassSignature: string[] = classSignature.split(" ").filter(el => el)
@@ -35,11 +38,13 @@ export class ClassToken implements Token {
 		}
 
 		const currentClassContext: ClassContext = {
+			context: "class",
 			name: className,
 			parent: parent,
 			attributes: [],
 			methods: []
 		}
+
 		context.classes.push(currentClassContext)
 	}
 }
@@ -59,7 +64,8 @@ export class AccessModifyerToken implements Token {
 		return 0
 	}
 
-	public processToken(context: ClassContext, content: string): void {
+	public processToken(context: Context, content: string): void {
+		if (context.context !== "class") throw new Error("Wrong context passed to ClassToken")
 		this.specifyType(content)
 
 		if (this.type === "method") {

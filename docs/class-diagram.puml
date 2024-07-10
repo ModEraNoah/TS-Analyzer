@@ -1,0 +1,84 @@
+@startuml
+
+metaclass Context {}
+note top of Context : Intersection of all Context-Types(interfaces)
+
+interface MainContext {
+	context: "main"
+	fileName: string
+	functions: FunctionContext[]
+	classes: ClassContext[]
+	variables: VariableContext[]
+}
+
+interface FunctionContext {
+	context: "funciton"
+	name: string
+	parameters: VariableContext
+	return: string
+}
+
+interface ClassContext {
+	context: "class"
+	name: string
+	parent: string
+	attributes: VariableContext[]
+	methods: ({ accessModifyer: string } & FunctionContext)[]
+}
+
+interface VariableContext {
+	context: "variable"
+	name: string
+	type: string
+}
+
+
+interface ITokenizer {
+	getNextToken: (currentIndex: number, content: string) => Token
+}
+
+class Tokenizer implements ITokenizer {
+	+getNextToken(currentIndex: number, content: string): Token
+	-getnextWordStartidx(currentIndex: number, content: string): number
+	-getNextWordEndIdx(currentIndex: number, content: string): number
+	-isWhitespace(character: string): boolean
+}
+
+
+interface Token {
+	name: string;
+	startIdx: number;
+	endIdx: number;
+	getTokenEnd: (content: string) => number;
+	processToken: (context: Context, content: string) => void
+}
+
+class ClassToken implements Token {
+
+}
+
+class AccessModifyerToken implements Token {
+	-type: "method" | "attribute"
+	-specifyType(content:string): void
+}
+
+class ImportToken implements Token {}
+class ExportToken implements Token {}
+class FunctionToken implements Token {}
+class SlCommentToken implements Token {}
+class MlCommentToken implements Token {}
+class VariableToken implements Token {}
+class ObjectToken implements Token {}
+class AsyncToken implements Token {}
+class UnknownToken implements Token {}
+
+
+class util {
+	getClosingBracketIndex(startIndex: number, content: string): number
+}
+
+class reader {
+	readFile(path: string): string
+}
+
+@enduml
