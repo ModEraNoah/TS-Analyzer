@@ -1,4 +1,4 @@
-import { ClassToken } from "../src/token/Token"
+import { ClassToken } from "../src/token/ClassToken"
 import { Tokenizer } from "../src/Tokenizer"
 
 const tokenizer = new Tokenizer()

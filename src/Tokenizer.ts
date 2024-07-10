@@ -1,4 +1,15 @@
-import { ClassToken, Token } from "./token/Token";
+import { Token } from "./token/Token";
+import { ClassToken } from "./token/ClassToken";
+import { ImportToken } from "./token/ImportToken";
+import { ExportToken } from "./token/ExportToken";
+import { FunctionToken } from "./token/FunctionToken";
+import { SlCommentToken } from "./token/SlCommentToken";
+import { MlCommentToken } from "./token/MlCommentToken";
+import { AccessModifyerToken } from "./token/AccessModifyerToken";
+import { VariableToken } from "./token/VariableToken";
+import { ObjectToken } from "./token/ObjectToken";
+import { AsyncToken } from "./token/AsyncToken";
+import { UnknownToken } from "./token/UnknownToken";
 
 export interface ITokenizer {
 	getNextToken: (currentIndex: number, content: string) => Token

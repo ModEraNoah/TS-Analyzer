@@ -1,5 +1,5 @@
 import { MainContext } from "../src/Context"
-import { ClassToken } from "../src/token/Token"
+import { ClassToken } from "../src/token/ClassToken"
 
 describe("Token", () => {
 	describe("ClassToken", () => {
@@ -14,7 +14,7 @@ describe("Token", () => {
 
 				const classToken = new ClassToken(0)
 				classToken.processToken(context, content)
-				expect(context.classes).toEqual([{ name: "SomeTestClass", parent: "", attributes: [], methods: [] }])
+				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "", attributes: [], methods: [] }])
 			})
 			test("class implements interface", () => {
 				const context: MainContext = { context: "main", fileName: "filename", functions: [], classes: [], variables: [] }
@@ -22,7 +22,7 @@ describe("Token", () => {
 
 				const classToken = new ClassToken(0)
 				classToken.processToken(context, content)
-				expect(context.classes).toEqual([{ name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
+				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
 			})
 			test("class extends parent", () => {
 				const context: MainContext = { context: "main", fileName: "filename", functions: [], classes: [], variables: [] }
@@ -30,7 +30,7 @@ describe("Token", () => {
 
 				const classToken = new ClassToken(0)
 				classToken.processToken(context, content)
-				expect(context.classes).toEqual([{ name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
+				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
 			})
 		})
 	})
