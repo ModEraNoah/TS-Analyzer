@@ -34,4 +34,10 @@ describe("Token", () => {
 			})
 		})
 	})
+
+	describe("FunctionToken", () => {
+		describe("processToken", () => {
+
+		})
+	})
 })

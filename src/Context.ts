@@ -11,7 +11,7 @@ export interface MainContext {
 export interface FunctionContext {
 	context: "function"
 	name: string;
-	parameters: VariableContext
+	parameters: VariableContext[]
 	return: string
 }
 

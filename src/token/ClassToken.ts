@@ -22,9 +22,11 @@ export class ClassToken implements Token {
 		if (context.context !== "main") throw new Error("Wrong context passed to ClassToken");
 
 		let bracketIdx = content.indexOf("{", this.startIdx);
+
 		const classSignature = content.substring(this.startIdx, bracketIdx);
 		const splittedClassSignature: string[] = classSignature.split(" ").filter(el => el);
 		const className = splittedClassSignature[1];
+
 		let parent = "";
 
 		if (splittedClassSignature.length > 2) {
