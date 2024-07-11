@@ -22,7 +22,7 @@ export class Tokenizer implements ITokenizer {
 
 	public getNextToken(currentIndex: number, content: string): Token {
 		const nextWordStart: number = this.getNextWordStartIdx(currentIndex, content)
-		const nextWordEnd: number = this.getNextWordEndIdx(currentIndex, content)
+		const nextWordEnd: number = this.getNextWordEndIdx(nextWordStart, content)
 
 		const currentWord = content.substring(nextWordStart, nextWordEnd)
 		switch (currentWord) {
