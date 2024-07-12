@@ -9,15 +9,16 @@ export class UnknownToken implements Token {
 	constructor(startIdx: number) {
 		this.name = "async"
 		this.startIdx = startIdx
+		this.endIdx =
+			this.startIdx + 1
 	}
 
 	public getTokenEnd(content: string): number {
-		//TODO
-		throw new Error("Not implemented yet")
+		return this.startIdx + 1
 	}
 
-	public processToken(context: Context, content: string): void {
+	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
+		console.error("unknown token with startIdx", this.startIdx)
 	}
 }

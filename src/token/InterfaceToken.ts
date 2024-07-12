@@ -1,13 +1,13 @@
 import { Context } from "../Context";
 import { Token } from "./Token"
 
-export class MlCommentToken implements Token {
+export class InterfaceToken implements Token {
 	public name: string;
 	public startIdx: number;
 	public endIdx: number = -1
 
 	constructor(startIdx: number) {
-		this.name = "multi line comment"
+		this.name = "interface"
 		this.startIdx = startIdx
 	}
 
