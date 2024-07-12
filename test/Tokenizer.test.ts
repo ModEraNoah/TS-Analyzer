@@ -1,5 +1,5 @@
-import { ClassToken } from "../src/token/Token"
-import { Context, Tokenizer } from "../src/Tokenizer"
+import { ClassToken } from "../src/token/ClassToken"
+import { Tokenizer } from "../src/Tokenizer"
 
 const tokenizer = new Tokenizer()
 describe("Tokenizer", () => {

@@ -1,4 +1,17 @@
-import { ClassToken, Token } from "./token/Token";
+import { Token } from "./token/Token";
+import { ClassToken } from "./token/ClassToken";
+import { ImportToken } from "./token/ImportToken";
+import { ExportToken } from "./token/ExportToken";
+import { FunctionToken } from "./token/FunctionToken";
+import { SlCommentToken } from "./token/SlCommentToken";
+import { MlCommentToken } from "./token/MlCommentToken";
+import { AccessModifyerToken } from "./token/AccessModifyerToken";
+import { VariableToken } from "./token/VariableToken";
+import { ObjectToken } from "./token/ObjectToken";
+import { AsyncToken } from "./token/AsyncToken";
+import { UnknownToken } from "./token/UnknownToken";
+import { WhitespaceToken } from "./token/WhitespaceToken";
+import { ConstructorToken } from "./token/Constructor";
 
 export interface ITokenizer {
 	getNextToken: (currentIndex: number, content: string) => Token
@@ -11,7 +24,9 @@ export class Tokenizer implements ITokenizer {
 
 	public getNextToken(currentIndex: number, content: string): Token {
 		const nextWordStart: number = this.getNextWordStartIdx(currentIndex, content)
-		const nextWordEnd: number = this.getNextWordEndIdx(currentIndex, content)
+		let nextWordEnd: number = this.getNextWordEndIdx(nextWordStart, content)
+
+		if (nextWordEnd === -1) nextWordEnd = content.length
 
 		const currentWord = content.substring(nextWordStart, nextWordEnd)
 		switch (currentWord) {
@@ -39,6 +54,10 @@ export class Tokenizer implements ITokenizer {
 				return new ObjectToken(nextWordStart)
 			case "async":
 				return new AsyncToken(nextWordStart)
+			case " ":
+				return new WhitespaceToken(nextWordStart)
+			case "constructor":
+				return new ConstructorToken(nextWordStart)
 			default:
 				return new UnknownToken(nextWordStart)
 		}
@@ -64,11 +83,11 @@ export class Tokenizer implements ITokenizer {
 			if (currentIndex >= content.length) break;
 			currentIndex++
 		}
-		while (!this.isWhitespace(content[currentIndex]))
+		while (!this.isWhitespace(content[currentIndex]) && content[currentIndex] !== "(")
 		return currentIndex
 	}
 
 	private isWhitespace(character: string): boolean {
-		return character === " " || character === "\n" || character === "\r" || character === "\r\n"
+		return character === " " || character === "\n" || character === "\r" || character === "\r\n" || character === "\t"
 	}
 }
