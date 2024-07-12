@@ -19,9 +19,12 @@ export interface ClassContext {
 	context: "class"
 	name: string;
 	parent: string
-	attributes: VariableContext[]
-	methods: ({ accessModifyer: string } & FunctionContext)[]
+	attributes: AttributeContext[]
+	methods: MethodContext[]
 }
+
+export type MethodContext = ({ accessModifyer: string } & FunctionContext)
+export type AttributeContext = ({ accessModifyer: string } & VariableContext)
 
 export interface VariableContext {
 	context: "variable"

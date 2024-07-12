@@ -14,7 +14,7 @@ describe("Token", () => {
 				const content = "class SomeTestClass {xxx}"
 
 				const classToken = new ClassToken(0)
-				classToken.processToken(context, content)
+				classToken.processToken(context.classes, content)
 				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "", attributes: [], methods: [] }])
 			})
 			test("class implements interface", () => {
@@ -22,7 +22,7 @@ describe("Token", () => {
 				const content = "class SomeTestClass implements ISomeClass {xxx}"
 
 				const classToken = new ClassToken(0)
-				classToken.processToken(context, content)
+				classToken.processToken(context.classes, content)
 				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
 			})
 			test("class extends parent", () => {
@@ -30,7 +30,7 @@ describe("Token", () => {
 				const content = "class SomeTestClass extends ISomeClass {xxx}"
 
 				const classToken = new ClassToken(0)
-				classToken.processToken(context, content)
+				classToken.processToken(context.classes, content)
 				expect(context.classes).toEqual([{ context: "class", name: "SomeTestClass", parent: "ISomeClass", attributes: [], methods: [] }])
 			})
 		})
@@ -43,7 +43,7 @@ describe("Token", () => {
 				const content = "function someFunc() {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [], return: "any" }])
 			})
 
@@ -52,7 +52,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: number) {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "number" }], return: "any" }])
 			})
 
@@ -61,7 +61,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: number, otherParam: string| number){console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "number" }, { context: "variable", name: "otherParam", type: "string| number" }], return: "any" }])
 			})
 
@@ -70,7 +70,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: number, otherParam: string| number, thirdParam: boolean){console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "number" }, { context: "variable", name: "otherParam", type: "string| number" }, { context: "variable", name: "thirdParam", type: "boolean" }], return: "any" }])
 			})
 
@@ -79,7 +79,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam?: number) {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam?", type: "number" }], return: "any" }])
 			})
 
@@ -88,7 +88,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: number = 3) {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "number = 3" }], return: "any" }])
 			})
 
@@ -97,7 +97,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: number): number {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "number" }], return: "number" }])
 			})
 
@@ -106,7 +106,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: {key: number}): number {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "{key: number}" }], return: "number" }])
 			})
 
@@ -115,7 +115,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: {key: number}):     {someKey: someType} {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "{key: number}" }], return: "{someKey: someType}" }])
 			})
 
@@ -124,7 +124,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: {key: number}):{someKey: someType} {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "{key: number}" }], return: "{someKey: someType}" }])
 			})
 
@@ -133,7 +133,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: {key: number}): number[] {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "{key: number}" }], return: "number[]" }])
 			})
 
@@ -142,7 +142,7 @@ describe("Token", () => {
 				const content = "function someFunc(someParam: {key: number}): {somekey: type}[] {console.log('something');}"
 
 				const functionToken = new FunctionToken(0);
-				functionToken.processToken(context, content)
+				functionToken.processToken(context.functions, content)
 				expect(context.functions).toEqual([{ context: "function", name: "someFunc", parameters: [{ context: "variable", name: "someParam", type: "{key: number}" }], return: "{somekey: type}[]" }])
 			})
 		})

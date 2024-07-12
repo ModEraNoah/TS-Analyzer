@@ -14,12 +14,12 @@ export class FunctionToken implements Token {
 
 	public getTokenEnd(content: string): number {
 		let idx = content.indexOf("{", this.startIdx);
-		return getClosingBracketIndex(idx, content);
+		this.endIdx = getClosingBracketIndex(idx, content);
+		return this.endIdx
 	}
 
 
-	public processToken(context: Context, content: string): void {
-		if (context.context !== "main") throw new Error("Wrong context passed to ClassToken");
+	public processToken(context: Context[], content: string): void {
 
 		const paramsOpeningBracketIdx = content.indexOf("(", this.startIdx)
 		const paramsClosingBracketIdx = getRoundClosingBracketIndex(paramsOpeningBracketIdx, content)
@@ -71,6 +71,6 @@ export class FunctionToken implements Token {
 			return: returnType
 		};
 
-		context.functions.push(currentFunctionContext);
+		context.push(currentFunctionContext);
 	}
 }

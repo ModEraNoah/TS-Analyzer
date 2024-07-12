@@ -14,24 +14,21 @@ export class ClassToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
+		if (this.endIdx !== -1) return this.endIdx;
+
 		let idx = content.indexOf("{", this.startIdx);
-		return getClosingBracketIndex(idx, content);
+		let closingIdx = getClosingBracketIndex(idx, content);
+		this.endIdx = closingIdx// + 1
+		return this.endIdx
 	}
 
-	public processToken(context: Context, content: string): void {
-		if (context.context !== "main") throw new Error("Wrong context passed to ClassToken");
+	public processToken(context: Context[], content: string): void {
 
-		let bracketIdx = content.indexOf("{", this.startIdx);
+		const openingBracketIdx = content.indexOf("{", this.startIdx);
+		const closingBracketIdx = this.getTokenEnd(content)
+		this.endIdx = closingBracketIdx
 
-		const classSignature = content.substring(this.startIdx, bracketIdx);
-		const splittedClassSignature: string[] = classSignature.split(" ").filter(el => el);
-		const className = splittedClassSignature[1];
-
-		let parent = "";
-
-		if (splittedClassSignature.length > 2) {
-			parent = splittedClassSignature[3];
-		}
+		const [className, parent] = this.processClassSignature(content, openingBracketIdx)
 
 		const currentClassContext: ClassContext = {
 			context: "class",
@@ -41,7 +38,21 @@ export class ClassToken implements Token {
 			methods: []
 		};
 
-		context.classes.push(currentClassContext);
+		context.push(currentClassContext);
+	}
+
+	private processClassSignature(content: string, openingBracketIdx: number): [className: string, parent: string] {
+		const classSignature = content.substring(this.startIdx, openingBracketIdx);
+		const splittedClassSignature: string[] = classSignature.split(" ").filter(el => el);
+		const className = splittedClassSignature[1];
+
+		let parent = "";
+
+		if (splittedClassSignature.length > 2) {
+			parent = splittedClassSignature[3];
+		}
+
+		return [className, parent]
 	}
 }
 

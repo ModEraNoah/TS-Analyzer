@@ -13,11 +13,13 @@ export class ExportToken implements Token {
 
 	public getTokenEnd(content: string): number {
 		//TODO
-		throw new Error("Not implemented yet")
+		// return this.startIdx + 1
+		this.endIdx = content.indexOf(" ", this.startIdx)
+		return this.endIdx
 	}
 
-	public processToken(context: Context, content: string): void {
+	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
+		// throw new Error("Not implemented yet")
 	}
 }

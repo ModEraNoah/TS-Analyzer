@@ -16,7 +16,7 @@ export class VariableToken implements Token {
 		throw new Error("Not implemented yet")
 	}
 
-	public processToken(context: Context, content: string): void {
+	public processToken(context: Context[], content: string): void {
 		//TODO
 		throw new Error("Not implemented yet")
 	}
