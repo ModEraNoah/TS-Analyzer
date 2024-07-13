@@ -12,12 +12,11 @@ export class MlCommentToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
-		//TODO
-		throw new Error("Not implemented yet")
+		this.endIdx = content.indexOf("*/", this.startIdx)
+		return this.endIdx
 	}
 
 	public processToken(context: Context[], content: string): void {
-		//TODO
-		throw new Error("Not implemented yet")
+		//
 	}
 }
