@@ -1,15 +1,34 @@
+import { Command } from "commander";
 import { Main } from "./Main";
 import { PumlWriter } from "./PumlWriter";
 import { readFile } from "./Reader";
 import { RelationSolver } from "./RelationSolver";
 import { Tokenizer } from "./Tokenizer";
 
+import fs from "fs";
+
+const program = new Command()
+program.version("0.0.2").option("-d --dir <value> ", "Directory to parse").option("-f --file <value>", "File to parse").parse(process.argv)
+const cliOptions = program.opts()
+
+const defaultPath: string = __dirname + "/.."
+console.log("defaultPath:", defaultPath)
+let path = fs.realpathSync(defaultPath)
+if (cliOptions.file) {
+	path = fs.realpathSync(cliOptions.file)
+}
+
+let content = readFile(path)
+
+
+/*
 // const path = "/home/noah/Documents/prog/TS-Analyzer/src/Tokenizer.ts"
 let path = "/home/noah/Documents/prog/TS-Analyzer/src/Main.ts"
 let content = readFile(path)
 
 path = "/home/noah/Documents/prog/TS-Analyzer/src/util.ts"
 content += readFile(path)
+*/
 
 console.log("content-lengt:", content.length)
 console.log("")
