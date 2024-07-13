@@ -1,25 +1,12 @@
 import { Command } from "commander";
 import { Main } from "./Main";
 import { PumlWriter } from "./PumlWriter";
-import { readFile } from "./Reader";
+import { getAnalysingContent, getFilesOfDir, readFile } from "./Reader";
 import { RelationSolver } from "./RelationSolver";
 import { Tokenizer } from "./Tokenizer";
 
-import fs from "fs";
 
-const program = new Command()
-program.version("0.0.2").option("-d --dir <value> ", "Directory to parse").option("-f --file <value>", "File to parse").parse(process.argv)
-const cliOptions = program.opts()
-
-const defaultPath: string = __dirname + "/.."
-console.log("defaultPath:", defaultPath)
-let path = fs.realpathSync(defaultPath)
-if (cliOptions.file) {
-	path = fs.realpathSync(cliOptions.file)
-}
-
-let content = readFile(path)
-
+const content = getAnalysingContent()
 
 /*
 // const path = "/home/noah/Documents/prog/TS-Analyzer/src/Tokenizer.ts"
@@ -34,7 +21,7 @@ console.log("content-lengt:", content.length)
 console.log("")
 
 const tokenizer = new Tokenizer()
-const main = new Main("Main.ts", content, tokenizer)
+const main = new Main("some file name in main instance", content, tokenizer)
 main.main()
 console.log("====================\n Main-Context:\n==================")
 console.log(main["context"])
