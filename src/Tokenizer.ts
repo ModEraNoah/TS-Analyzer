@@ -12,6 +12,7 @@ import { AsyncToken } from "./token/AsyncToken";
 import { UnknownToken } from "./token/UnknownToken";
 import { WhitespaceToken } from "./token/WhitespaceToken";
 import { ConstructorToken } from "./token/Constructor";
+import { InterfaceToken } from "./token/InterfaceToken";
 
 export interface ITokenizer {
 	getNextToken: (currentIndex: number, content: string) => Token
@@ -40,6 +41,7 @@ export class Tokenizer implements ITokenizer {
 				return new FunctionToken(nextWordStart)
 			case "//":
 				return new SlCommentToken(nextWordStart)
+			case "/**":
 			case "/*":
 				return new MlCommentToken(nextWordStart)
 			case "public":
@@ -58,6 +60,8 @@ export class Tokenizer implements ITokenizer {
 				return new WhitespaceToken(nextWordStart)
 			case "constructor":
 				return new ConstructorToken(nextWordStart)
+			case "interface":
+				return new InterfaceToken(nextWordStart)
 			default:
 				return new UnknownToken(nextWordStart)
 		}

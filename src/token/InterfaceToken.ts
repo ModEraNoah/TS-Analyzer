@@ -1,4 +1,5 @@
 import { Context } from "../Context";
+import { getClosingBracketIndex } from "../util";
 import { Token } from "./Token"
 
 export class InterfaceToken implements Token {
@@ -12,12 +13,12 @@ export class InterfaceToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
-		//TODO
-		throw new Error("Not implemented yet")
+		const interfaceStart = content.indexOf("{", this.startIdx)
+		this.endIdx = getClosingBracketIndex(interfaceStart, content)
+		return this.endIdx
 	}
 
 	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
 	}
 }
