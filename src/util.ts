@@ -52,7 +52,7 @@ export function isNativeType(type: string) {
 
 export function getCliOptions() {
 	const program = new Command()
-	program.version("0.0.2").option("-d --dir <value> ", "Directory to parse").option("-f --file <value>", "File to parse").parse(process.argv)
+	program.version("1.0.0").option("-d --dir <value> ", "Directory to parse").option("-f --file <value>", "File to parse").parse(process.argv)
 	const cliOptions = program.opts()
 
 	return cliOptions
