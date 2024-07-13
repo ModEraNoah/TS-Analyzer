@@ -2,6 +2,27 @@ import { AttributeContext, ClassContext, FunctionContext, MethodContext, Variabl
 
 export class RelationSolver {
 
+	public getClassDependencies(classContext: ClassContext[]) {
+		const dependencies: { className: string, dependencies: string[] }[] = []
+		for (let i = 0; i < classContext.length; i++) {
+			const currentClass = classContext[i]
+			const currentDependencies: string[] = []
+			const dep: { className: string, dependencies: string[] } = { className: currentClass.name, dependencies: currentDependencies }
+
+			if (currentClass.parent) currentDependencies.push(currentClass.parent)
+
+			const varDep = this.getVariableDependencies(currentClass.attributes)
+			varDep.forEach((el) => currentDependencies.push(el.dependency))
+
+			const funcDep = this.getFunctionDependencies(currentClass.methods)
+			funcDep.forEach(el => currentDependencies.push(...el.dependencies))
+
+			dependencies.push(dep)
+		}
+
+		return dependencies
+	}
+
 	public getVariableDependencies(context: (VariableContext | AttributeContext)[]) {
 		const dependencies: { varName: string, dependency: string }[] = []
 
