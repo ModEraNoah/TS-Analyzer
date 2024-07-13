@@ -31,3 +31,20 @@ export function getRoundClosingBracketIndex(startIndex: number, content: string)
 
 	return startIndex
 }
+
+export function isNativeType(type: string) {
+	switch (type.split("[")[0]) {
+		case "number":
+		case "string":
+		case "boolean":
+		case "void":
+		case "any":
+		case "unknown":
+		case "bigint":
+		case "undefined":
+		case "never":
+			return true
+		default:
+			return false
+	}
+}
