@@ -13,7 +13,8 @@ export class ConstructorToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
-		//TODO
+		if (this.endIdx !== -1) return this.endIdx
+
 		const openingBracketIdx = content.indexOf("(", this.startIdx)
 		const closingBracketIdx = getRoundClosingBracketIndex(openingBracketIdx, content)
 
