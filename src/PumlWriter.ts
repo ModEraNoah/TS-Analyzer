@@ -53,4 +53,26 @@ export class PumlWriter {
 				return access
 		}
 	}
+
+	public writeFunctionDependencies(functionRelations: FunctionRelations): void {
+		for (let i = 0; i < functionRelations.dependencies.length; i++) {
+			if (!isNativeType(functionRelations.dependencies[i])) {
+				console.log(`${functionRelations.funcName} -> ${functionRelations.dependencies[i].replace("[]", "")}`)
+			}
+		}
+	}
+
+	public writeFunctionMetaData(functionContext: FunctionContext): void {
+		console.log(`class ${functionContext.name} <<function>> {`)
+		let parameterString = ""
+		for (let i = 0; i < functionContext.parameters.length; i++) {
+			if (i === 0) {
+				parameterString += `${functionContext.parameters[i].name}: ${functionContext.parameters[i].type}`
+			} else {
+				parameterString += `, ${functionContext.parameters[i].name}: ${functionContext.parameters[i].type}`
+			}
+		}
+		console.log(`+ ${functionContext.name} (${parameterString}): ${functionContext.return}`)
+		console.log("}")
+	}
 }
