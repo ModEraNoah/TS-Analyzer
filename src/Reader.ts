@@ -14,3 +14,16 @@ export function readFile(path: string): string {
 
 	return fileBuffer.toString()
 }
+
+export function getFilesOfDir(dirPath: string): string[] {
+	const filePaths: string[] = []
+	fs.readdirSync(dirPath).forEach(element => {
+		const filePath = fs.realpathSync(dirPath + "/" + element)
+		if (fs.lstatSync(filePath).isFile()) {
+			filePaths.push(filePath)
+		} else {
+			filePaths.push(...getFilesOfDir(filePath))
+		}
+	})
+	return filePaths
+}
