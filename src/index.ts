@@ -2,7 +2,8 @@ import { Main } from "./Main";
 import { readFile } from "./Reader";
 import { Tokenizer } from "./Tokenizer";
 
-const content = readFile("/home/noah/Documents/prog/TS-Analyzer/src/Main.ts")
+const path = "/home/noah/Documents/prog/TS-Analyzer/src/Tokenizer.ts"
+const content = readFile(path)
 console.log("content-lengt:", content.length)
 console.log("")
 
