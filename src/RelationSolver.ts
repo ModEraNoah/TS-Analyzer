@@ -1,15 +1,20 @@
 import { AttributeContext, ClassContext, FunctionContext, MethodContext, VariableContext } from "./Context";
 
+export interface ClassRelations { className: string, parent: string, dependencies: string[] }
+export interface VariableRelations { varName: string, dependency: string }
+export interface FunctionRelations { funcName: string, dependencies: string[] }
+
 export class RelationSolver {
 
-	public getClassDependencies(classContext: ClassContext[]) {
-		const dependencies: { className: string, dependencies: string[] }[] = []
+	public getClassDependencies(classContext: ClassContext[]): ClassRelations[] {
+		const dependencies: ClassRelations[] = []
 		for (let i = 0; i < classContext.length; i++) {
 			const currentClass = classContext[i]
+			console.log("currentClass:", currentClass)
 			const currentDependencies: string[] = []
-			const dep: { className: string, dependencies: string[] } = { className: currentClass.name, dependencies: currentDependencies }
+			const dep: ClassRelations = { className: currentClass.name, parent: "", dependencies: currentDependencies }
 
-			if (currentClass.parent) currentDependencies.push(currentClass.parent)
+			if (currentClass.parent) dep.parent = currentClass.parent
 
 			const varDep = this.getVariableDependencies(currentClass.attributes)
 			varDep.forEach((el) => currentDependencies.push(el.dependency))
@@ -23,7 +28,7 @@ export class RelationSolver {
 		return dependencies
 	}
 
-	public getVariableDependencies(context: (VariableContext | AttributeContext)[]) {
+	public getVariableDependencies(context: (VariableContext | AttributeContext)[]): VariableRelations[] {
 		const dependencies: { varName: string, dependency: string }[] = []
 
 		for (let i = 0; i < context.length; i++) {
@@ -35,7 +40,7 @@ export class RelationSolver {
 		return dependencies
 	}
 
-	public getFunctionDependencies(context: (FunctionContext | MethodContext)[]) {
+	public getFunctionDependencies(context: (FunctionContext | MethodContext)[]): FunctionRelations[] {
 		const dependencies: { funcName: string, dependencies: string[] }[] = []
 
 		for (let i = 0; i < context.length; i++) {
