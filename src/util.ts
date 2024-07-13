@@ -1,3 +1,4 @@
+import { Command } from "commander"
 
 export function getClosingBracketIndex(startIndex: number, content: string) {
 	let bracketsCounter = 1
@@ -47,4 +48,12 @@ export function isNativeType(type: string) {
 		default:
 			return false
 	}
+}
+
+export function getCliOptions() {
+	const program = new Command()
+	program.version("0.0.2").option("-d --dir <value> ", "Directory to parse").option("-f --file <value>", "File to parse").parse(process.argv)
+	const cliOptions = program.opts()
+
+	return cliOptions
 }
