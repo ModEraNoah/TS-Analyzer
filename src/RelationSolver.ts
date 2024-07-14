@@ -10,7 +10,6 @@ export class RelationSolver {
 		const dependencies: ClassRelations[] = []
 		for (let i = 0; i < classContext.length; i++) {
 			const currentClass = classContext[i]
-			console.log("currentClass:", currentClass)
 			const currentDependencies: string[] = []
 			const dep: ClassRelations = { className: currentClass.name, parent: "", dependencies: currentDependencies }
 

@@ -24,10 +24,9 @@ const tokenizer = new Tokenizer()
 const main = new Main("some file name in main instance", content, tokenizer)
 main.main()
 console.log("====================\n Main-Context:\n==================")
-console.log(main["context"])
+// console.log(main["context"])
 
 const relationSolver = new RelationSolver()
-console.log(relationSolver.getClassDependencies(main["context"].classes))
 
 const classRelations = relationSolver.getClassDependencies(main["context"].classes)
 const functionRelations = relationSolver.getFunctionDependencies(main["context"].functions)

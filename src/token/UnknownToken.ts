@@ -19,6 +19,6 @@ export class UnknownToken implements Token {
 
 	public processToken(context: Context[], content: string): void {
 		//TODO
-		console.error("unknown token with startIdx", this.startIdx)
+		console.error("unknown token with startIdx", this.startIdx, ":", content[this.startIdx])
 	}
 }
