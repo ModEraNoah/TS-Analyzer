@@ -3,13 +3,37 @@ import { Command } from "commander"
 export function getClosingBracketIndex(startIndex: number, content: string) {
 	let bracketsCounter = 1
 
-	content = content.replaceAll("`{`", "---")
-	content = content.replaceAll("`}`", "---")
-	content = content.replaceAll("'{'", "---")
-	content = content.replaceAll("'}'", "---")
-	content = content.replaceAll('"{"', "---")
-	content = content.replaceAll('"}"', "---")
+	let regex = /".*[{}].*"/g
+	let regexMatch = content.match(regex)
+	console.log("\n regex match:", regexMatch, "\n")
 
+	if (regexMatch) {
+		regexMatch.forEach(hit => {
+			content = content.replace(hit, "-".repeat(hit.length))
+		})
+	}
+
+	regex = /'.*[{}].*'/g
+	regexMatch = content.match(regex)
+	console.log("\n regex match:", regexMatch, "\n")
+
+	if (regexMatch) {
+		regexMatch.forEach(hit => {
+			content = content.replace(hit, "-".repeat(hit.length))
+		})
+	}
+
+	regex = /`.*[{}].*`/g
+	regexMatch = content.match(regex)
+	console.log("\n regex match:", regexMatch, "\n")
+
+	if (regexMatch) {
+		regexMatch.forEach(hit => {
+			content = content.replace(hit, "-".repeat(hit.length))
+		})
+	}
+
+	console.log("content with replaced string:", content)
 	while (bracketsCounter > 0) {
 		startIndex++
 		if (startIndex > content.length) return -1
