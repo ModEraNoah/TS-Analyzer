@@ -14,7 +14,9 @@ export class ImportToken implements Token {
 	public getTokenEnd(content: string): number {
 		//TODO
 		// return this.startIdx + 1
-		this.endIdx = content.indexOf("\n", this.startIdx)
+		const semi = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity
+		const newline = content.indexOf("\n", this.startIdx) > 0 ? content.indexOf("\n", this.startIdx) : Infinity
+		this.endIdx = Math.min(semi, newline)
 		return this.endIdx
 	}
 
