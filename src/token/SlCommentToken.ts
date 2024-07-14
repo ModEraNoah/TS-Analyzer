@@ -14,11 +14,15 @@ export class SlCommentToken implements Token {
 
 	public getTokenEnd(content: string): number {
 		//TODO
-		throw new Error("Not implemented yet")
+		// throw new Error("Not implemented yet")
+		if (this.endIdx !== -1) return this.endIdx
+
+		this.endIdx = content.indexOf("\n", this.startIdx)
+		return this.endIdx
 	}
 
 	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
+		// throw new Error("Not implemented yet")
 	}
 }
