@@ -28,17 +28,17 @@ export class FunctionToken implements Token {
 
 		let returnType = ""
 
-		// if not '): someType ...' ==> if it is of scheme ') {console.log(...)}'
+		// if not '): someType ...' ==> if it is of scheme ') "{"console.log(...)"}"'
 		if (content.substring(paramsClosingBracketIdx + 1, content.indexOf("{", paramsClosingBracketIdx)).trim()[0] !== ":") {
 			returnType = "any"
-			// :   {key: value} {console.log} => takes substring from : (+1) until the first {key => '   '
+			// :   "{"key: value"}" "{"console.log"}" => takes substring from : (+1) until the first "{"key => '   '
 		} else if (content.substring(content.indexOf(":", paramsClosingBracketIdx) + 1, content.indexOf("{", paramsClosingBracketIdx)).trim().length === 0) {
 			// return type is object
 			const typeOpeningBracket = content.indexOf("{", paramsClosingBracketIdx)
 			const typeClosingBracket = getClosingBracketIndex(typeOpeningBracket, content)
 
 			returnType = content.substring(typeOpeningBracket, content.indexOf("{", typeClosingBracket)).trim()
-			// : someTypeNotObject {console.log}
+			// : someTypeNotObject "{"console.log"}"
 		} else {
 			// return type is not object
 			returnType = content.substring(content.indexOf(":", paramsClosingBracketIdx) + 1, content.indexOf("{", paramsClosingBracketIdx)).trim()
