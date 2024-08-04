@@ -35,41 +35,7 @@ export class AccessModifyerToken implements Token {
 		if (this.type === "method") {
 			this.handleMethod(context, content)
 		} else {
-			//attribute
-			const equalSign = content.indexOf("=", this.startIdx) > 0 ? content.indexOf("=", this.startIdx) : Infinity
-			const semiColon = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity
-			const attributeSignatureEnd = Math.min(equalSign, semiColon)
-
-			const colon = content.indexOf(":", this.startIdx)
-			const bracket = content.indexOf("{", this.startIdx)
-
-			let attName = ""
-			let attType = "any"
-			let accessModifyer = ""
-			// if has type annotation and is not an object
-			if (colon !== -1 && colon < bracket && colon < attributeSignatureEnd) {
-				const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
-				for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
-
-				attName = fullAttName[fullAttName.length - 1]
-				attType = content.substring(colon + 1, attributeSignatureEnd)
-
-				//does not have type annotation and but initialisation
-			} else {
-				const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
-				for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
-
-				attName = fullAttName[fullAttName.length - 1]
-			}
-
-			const currentAttributeContext: AttributeContext = {
-				context: "variable",
-				name: attName.trim(),
-				type: attType.trim(),
-				accessModifyer: accessModifyer.trim()
-			}
-			let co = context as ClassContext[]
-			co[co.length - 1].attributes.push(currentAttributeContext)
+			this.handleVariable(context, content)
 		}
 	}
 
@@ -111,6 +77,43 @@ export class AccessModifyerToken implements Token {
 
 		let co = context as ClassContext[]
 		co[co.length - 1].methods.push(currentMethodContext);
+	}
+
+	private handleVariable(context: Context[], content: string) {
+		const equalSign = content.indexOf("=", this.startIdx) > 0 ? content.indexOf("=", this.startIdx) : Infinity
+		const semiColon = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity
+		const attributeSignatureEnd = Math.min(equalSign, semiColon)
+
+		const colon = content.indexOf(":", this.startIdx)
+		const bracket = content.indexOf("{", this.startIdx)
+
+		let attName = ""
+		let attType = "any"
+		let accessModifyer = ""
+		// if has type annotation and is not an object
+		if (colon !== -1 && colon < bracket && colon < attributeSignatureEnd) {
+			const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
+			for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
+
+			attName = fullAttName[fullAttName.length - 1]
+			attType = content.substring(colon + 1, attributeSignatureEnd)
+
+			//does not have type annotation and but initialisation
+		} else {
+			const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
+			for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
+
+			attName = fullAttName[fullAttName.length - 1]
+		}
+
+		const currentAttributeContext: AttributeContext = {
+			context: "variable",
+			name: attName.trim(),
+			type: attType.trim(),
+			accessModifyer: accessModifyer.trim()
+		}
+		let co = context as ClassContext[]
+		co[co.length - 1].attributes.push(currentAttributeContext)
 	}
 }
 
