@@ -1,4 +1,5 @@
 import { Context } from "../Context";
+import { getRoundClosingBracketIndex } from "../util";
 import { Token } from "./Token"
 
 export class ObjectToken implements Token {
@@ -13,11 +14,15 @@ export class ObjectToken implements Token {
 
 	public getTokenEnd(content: string): number {
 		//TODO
-		throw new Error("Not implemented yet")
+		//		throw new Error("Not implemented yet")
+		if (this.endIdx != -1) return this.endIdx
+		const openingBracket = content.indexOf("(", this.startIdx)
+		const closingBracket = getRoundClosingBracketIndex(openingBracket, content)
+		this.endIdx = closingBracket
+		return closingBracket
 	}
 
 	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
 	}
 }
