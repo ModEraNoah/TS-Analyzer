@@ -30,6 +30,7 @@ export class Tokenizer implements ITokenizer {
 		if (nextWordEnd === -1) nextWordEnd = content.length
 
 		const currentWord = content.substring(nextWordStart, nextWordEnd)
+		if (currentWord.startsWith("/**")) return new MlCommentToken(nextWordStart)
 		switch (currentWord) {
 			case "import":
 				return new ImportToken(nextWordStart)

@@ -12,7 +12,7 @@ export class MlCommentToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
-		this.endIdx = content.indexOf("*/", this.startIdx)
+		this.endIdx = content.indexOf("*/", this.startIdx) + 1
 		return this.endIdx
 	}
 
