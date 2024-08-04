@@ -13,11 +13,14 @@ export class AsyncToken implements Token {
 
 	public getTokenEnd(content: string): number {
 		//TODO
-		throw new Error("Not implemented yet")
+		//throw new Error("Not implemented yet")
+		const end = content.indexOf(" ", this.startIdx)
+		this.endIdx = end
+		return end
 	}
 
 	public processToken(context: Context[], content: string): void {
 		//TODO
-		throw new Error("Not implemented yet")
+		// throw new Error("Not implemented yet")
 	}
 }
