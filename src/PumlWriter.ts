@@ -25,6 +25,11 @@ export class PumlWriter {
 	public writeClassMetaData(classContext: ClassContext): void {
 		console.log(`class ${classContext.name} {`)
 
+		classContext.attributes.forEach(attribute => {
+			let parameterString = ""
+			console.log(`${this.translateAccessModifyer(attribute.accessModifyer)} ${attribute.name} : ${attribute.type}`)
+		})
+
 		classContext.methods.forEach(method => {
 			let parameterString = ""
 			for (let i = 0; i < method.parameters.length; i++) {
