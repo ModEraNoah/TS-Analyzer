@@ -1,4 +1,4 @@
-import { Context } from "../Context";
+import { AttributeContext, ClassContext, Context } from "../Context";
 import { getClosingBracketIndex } from "../util";
 import { Token } from "./Token"
 
@@ -19,6 +19,41 @@ export class InterfaceToken implements Token {
 	}
 
 	public processToken(context: Context[], content: string): void {
-		//TODO
+		const interfaceStart = content.indexOf("{", this.startIdx)
+		const interfaceEnd = this.getTokenEnd(content)
+
+		const interfaceSignature: string[] = content.substring(this.startIdx, interfaceStart).trim().split(" ").filter(el => el)
+		const interfaceName = interfaceSignature[1]
+
+		let interfaceParent: string = ""
+		if (interfaceSignature.length > 2) {
+			interfaceParent = interfaceSignature[3]
+		}
+
+		const interfaceContent: string[] = content.substring(interfaceStart + 1, interfaceEnd).replaceAll("\n", "").split(";").filter(el=> el)
+		let attributes: AttributeContext[] = this.getInterfaceAttributes(interfaceContent)
+
+		context.push({
+			context: "class",
+			name: interfaceName,
+			parent: interfaceParent,
+			attributes: attributes,
+			methods: []
+		})
+	}
+
+	private getInterfaceAttributes(interfaceContent: string[]): AttributeContext[] {
+		const attributes: AttributeContext[] = []
+		for (const attribute of interfaceContent) {
+			const [name, ...type] = attribute.split(":")
+			const att: AttributeContext = {
+				context: "variable",
+				name: name.trim(),
+				type: type.join(":").trim(),
+				accessModifyer: "public"
+			}
+			attributes.push(att)
+		}
+		return attributes
 	}
 }
