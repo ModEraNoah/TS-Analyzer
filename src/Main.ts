@@ -1,6 +1,7 @@
 import { ClassContext, Context, MainContext } from "./Context";
 import { ClassToken } from "./token/ClassToken";
 import { Token } from "./token/Token";
+import { UnknownToken } from "./token/UnknownToken";
 import { Tokenizer } from "./Tokenizer";
 
 export class Main {
@@ -51,6 +52,7 @@ export class Main {
 			//
 			case "ClassToken":
 			case "InterfaceToken":
+			case "UnknownToken":
 				return this.context.classes
 			case "ExportToken":
 			case "FunctionToken":
@@ -59,7 +61,6 @@ export class Main {
 			case "MlCommentToken":
 			case "ObjectToken":
 			case "SlCommentToken":
-			case "UnkownToken":
 			case "VariableToken":
 			default:
 				return []
@@ -79,7 +80,12 @@ export class Main {
 			subToken = this.tokenizer.getNextToken(currentCharIndex, classBody)
 
 			let contextArray = this.getContextArrayToUse(subToken)
-			subToken.processToken(contextArray, classBody)
+			if (subToken.constructor.name === "UnknownToken") {
+				const unknownToken = subToken as UnknownToken
+				unknownToken.processToken(contextArray, classBody, true)
+			} else {
+				subToken.processToken(contextArray, classBody)
+			}
 
 			currentCharIndex = subToken.getTokenEnd(classBody) + 1
 		}
