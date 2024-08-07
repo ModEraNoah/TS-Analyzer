@@ -50,12 +50,12 @@ export class Main {
 			case "AsyncToken":
 			//
 			case "ClassToken":
+			case "InterfaceToken":
 				return this.context.classes
 			case "ExportToken":
 			case "FunctionToken":
 				return this.context.functions
 			case "ImportToken":
-			case "InterfaceToken":
 			case "MlCommentToken":
 			case "ObjectToken":
 			case "SlCommentToken":
