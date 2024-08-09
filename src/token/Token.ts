@@ -5,7 +5,5 @@ export interface Token {
 	startIdx: number;
 	endIdx: number;
 	getTokenEnd: (content: string) => number;
-	processToken: (context: Context[], content: string) => void
+	processToken: (context: Context[], content: string) => void;
 }
-
-
