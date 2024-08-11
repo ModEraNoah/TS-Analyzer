@@ -1,13 +1,14 @@
 import fs from "fs";
+import path from "path";
 import { getCliOptions } from "./util";
 
-export function readFile(path: string): string {
-	const isFile = fs.statSync(path).isFile;
-	if (!isFile) throw new Error("Provided file path is not a path");
+export function readFile(pathName: string): string {
+	const isFile = fs.statSync(pathName).isFile() && path.extname(pathName) === ".ts";
+	if (!isFile) return "";
 
 	let fileBuffer;
 	try {
-		fileBuffer = fs.readFileSync(path);
+		fileBuffer = fs.readFileSync(pathName);
 	} catch (error) {
 		console.error(`Error while reading file: ${error}`);
 		fileBuffer = "";
@@ -20,9 +21,9 @@ export function getFilesOfDir(dirPath: string): string[] {
 	const filePaths: string[] = [];
 	fs.readdirSync(dirPath).forEach((element) => {
 		const filePath = fs.realpathSync(dirPath + "/" + element);
-		if (fs.lstatSync(filePath).isFile()) {
+		if (fs.lstatSync(filePath).isFile() && path.extname(filePath) === ".ts") {
 			filePaths.push(filePath);
-		} else {
+		} else if (fs.lstatSync(filePath).isDirectory()) {
 			filePaths.push(...getFilesOfDir(filePath));
 		}
 	});
