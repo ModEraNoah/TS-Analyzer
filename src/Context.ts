@@ -1,7 +1,7 @@
-export type Context = MainContext | ClassContext | FunctionContext | VariableContext
+export type Context = MainContext | ClassContext | FunctionContext | VariableContext;
 
 export interface MainContext {
-	context: "main"
+	context: "main";
 	fileName: string;
 	functions: FunctionContext[];
 	classes: ClassContext[];
@@ -9,25 +9,26 @@ export interface MainContext {
 }
 
 export interface FunctionContext {
-	context: "function"
+	context: "function";
 	name: string;
-	parameters: VariableContext[]
-	return: string
+	parameters: VariableContext[];
+	return: string;
+	async: boolean;
 }
 
 export interface ClassContext {
-	context: "class"
+	context: "class";
 	name: string;
-	parent: string
-	attributes: AttributeContext[]
-	methods: MethodContext[]
+	parent: string;
+	attributes: AttributeContext[];
+	methods: MethodContext[];
 }
 
-export type MethodContext = ({ accessModifyer: string } & FunctionContext)
-export type AttributeContext = ({ accessModifyer: string } & VariableContext)
+export type MethodContext = { accessModifyer: string } & FunctionContext;
+export type AttributeContext = { accessModifyer: string } & VariableContext;
 
 export interface VariableContext {
-	context: "variable"
+	context: "variable";
 	name: string;
-	type: string
+	type: string;
 }

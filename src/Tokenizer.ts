@@ -15,83 +15,82 @@ import { ConstructorToken } from "./token/Constructor";
 import { InterfaceToken } from "./token/InterfaceToken";
 
 export interface ITokenizer {
-	getNextToken: (currentIndex: number, content: string) => Token
+	getNextToken: (currentIndex: number, content: string) => Token;
 }
 
 export class Tokenizer implements ITokenizer {
-
-	constructor() {
-	}
+	constructor() {}
 
 	public getNextToken(currentIndex: number, content: string): Token {
-		const nextWordStart: number = this.getNextWordStartIdx(currentIndex, content)
-		let nextWordEnd: number = this.getNextWordEndIdx(nextWordStart, content)
+		const nextWordStart: number = this.getNextWordStartIdx(currentIndex, content);
+		let nextWordEnd: number = this.getNextWordEndIdx(nextWordStart, content);
 
-		if (nextWordEnd === -1) nextWordEnd = content.length
+		if (nextWordEnd === -1) nextWordEnd = content.length;
 
-		const currentWord = content.substring(nextWordStart, nextWordEnd)
+		const currentWord = content.substring(nextWordStart, nextWordEnd);
+		if (currentWord.startsWith("/**")) return new MlCommentToken(nextWordStart);
 		switch (currentWord) {
 			case "import":
-				return new ImportToken(nextWordStart)
+				return new ImportToken(nextWordStart);
 			case "export":
-				return new ExportToken(nextWordStart)
+				return new ExportToken(nextWordStart);
 			case "class":
-				return new ClassToken(nextWordStart)
+				return new ClassToken(nextWordStart);
 			case "function":
-				return new FunctionToken(nextWordStart)
+				return new FunctionToken(nextWordStart);
 			case "//":
-				return new SlCommentToken(nextWordStart)
+				return new SlCommentToken(nextWordStart);
 			case "/**":
 			case "/*":
-				return new MlCommentToken(nextWordStart)
+				return new MlCommentToken(nextWordStart);
 			case "public":
 			case "private":
 			case "protected":
-				return new AccessModifyerToken(nextWordStart)
+				return new AccessModifyerToken(nextWordStart);
 			case "var":
 			case "const":
 			case "let":
-				return new VariableToken(nextWordStart)
+				return new VariableToken(nextWordStart);
 			case "new":
-				return new ObjectToken(nextWordStart)
+				return new ObjectToken(nextWordStart);
 			case "async":
-				return new AsyncToken(nextWordStart)
+				return new AsyncToken(nextWordStart);
 			case " ":
-				return new WhitespaceToken(nextWordStart)
+				return new WhitespaceToken(nextWordStart);
 			case "constructor":
-				return new ConstructorToken(nextWordStart)
+				return new ConstructorToken(nextWordStart);
 			case "interface":
-				return new InterfaceToken(nextWordStart)
+				return new InterfaceToken(nextWordStart);
 			default:
-				return new UnknownToken(nextWordStart)
+				return new UnknownToken(nextWordStart);
 		}
 	}
 
-
 	/**
-	* Returns the index of the next word (0-based index)
-	* If the index is out of bounce, the method returns __-1__
-	*/
+	 * Returns the index of the next word (0-based index)
+	 * If the index is out of bounce, the method returns __-1__
+	 */
 	private getNextWordStartIdx(currentIndex: number, content: string): number {
-		if (currentIndex >= content.length) return -1
+		if (currentIndex >= content.length) return -1;
 
 		while (this.isWhitespace(content[currentIndex])) {
-			currentIndex++
+			currentIndex++;
 		}
-		return currentIndex
+		return currentIndex;
 	}
 
 	private getNextWordEndIdx(currentIndex: number, content: string): number {
-		if (currentIndex >= content.length) return -1
+		if (currentIndex >= content.length) return -1;
 		do {
 			if (currentIndex >= content.length) break;
-			currentIndex++
-		}
-		while (!this.isWhitespace(content[currentIndex]) && content[currentIndex] !== "(")
-		return currentIndex
+			currentIndex++;
+		} while (!this.isWhitespace(content[currentIndex]) && content[currentIndex] !== "(");
+		return currentIndex;
 	}
 
 	private isWhitespace(character: string): boolean {
-		return character === " " || character === "\n" || character === "\r" || character === "\r\n" || character === "\t"
+		return (
+			character === " " || character === "\n" || character === "\r" || character === "\r\n" || character === "\t"
+		);
 	}
 }

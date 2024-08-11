@@ -1,8 +1,6 @@
-import { access } from "fs";
-import { AttributeContext, ClassContext, Context, MethodContext, VariableContext } from "../Context";
-import { getClosingBracketIndex, getRoundClosingBracketIndex } from "../util";
+import { AttributeContext, ClassContext, Context, MethodContext } from "../Context";
+import { getClosingBracketIndex, getFunctionMetaData } from "../util";
 import { Token } from "./Token";
-
 
 export class AccessModifyerToken implements Token {
 	public name: string;
@@ -19,114 +17,23 @@ export class AccessModifyerToken implements Token {
 		if (this.type === "method") {
 			let idx = content.indexOf("{", this.startIdx);
 			this.endIdx = getClosingBracketIndex(idx, content);
-			return this.endIdx
+			return this.endIdx;
 		} else {
-			let newlineIdx = content.indexOf("\n", this.startIdx) > 0 ? content.indexOf("\n", this.startIdx) : Infinity
-			let semicolonIdx = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity
-			let idx = Math.min(newlineIdx, semicolonIdx)
-			this.endIdx = idx
-			return this.endIdx
+			let newlineIdx = content.indexOf("\n", this.startIdx) > 0 ? content.indexOf("\n", this.startIdx) : Infinity;
+			let semicolonIdx = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity;
+			let idx = Math.min(newlineIdx, semicolonIdx);
+			this.endIdx = idx;
+			return this.endIdx;
 		}
 	}
 
-	public processToken(context: Context[], content: string): void {
-
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		this.specifyType(content);
 
 		if (this.type === "method") {
-			const paramsOpeningBracketIdx = content.indexOf("(", this.startIdx)
-			const paramsClosingBracketIdx = getRoundClosingBracketIndex(paramsOpeningBracketIdx, content)
-			const paramsString = content.substring(paramsOpeningBracketIdx + 1, paramsClosingBracketIdx)
-
-
-			let returnType = ""
-
-			// if not '): someType ...' ==> if it is of scheme ') {console.log(...)}'
-			if (content.substring(paramsClosingBracketIdx + 1, content.indexOf("{", paramsClosingBracketIdx)).trim()[0] !== ":") {
-				returnType = "any"
-				// :   {key: value} {console.log} => takes substring from : (+1) until the first {key => '   '
-			} else if (content.substring(content.indexOf(":", paramsClosingBracketIdx) + 1, content.indexOf("{", paramsClosingBracketIdx)).trim().length === 0) {
-				// return type is object
-				const typeOpeningBracket = content.indexOf("{", paramsClosingBracketIdx)
-				const typeClosingBracket = getClosingBracketIndex(typeOpeningBracket, content)
-
-				returnType = content.substring(typeOpeningBracket, content.indexOf("{", typeClosingBracket)).trim()
-				// : someTypeNotObject {console.log}
-			} else {
-				// return type is not object
-				returnType = content.substring(content.indexOf(":", paramsClosingBracketIdx) + 1, content.indexOf("{", paramsClosingBracketIdx)).trim()
-			}
-
-			const parameters: VariableContext[] = []
-
-			if (paramsString.length > 0) {
-				const paramsArray = paramsString.split(",")
-
-				for (const param of paramsArray) {
-					// desctructor to seperate the first part from all others - later on, the rest (pr) will be joined by ":"
-					const [p1, ...pr] = param.split(":")
-
-					parameters.push({
-						context: "variable",
-						name: p1.trim(),
-						type: pr.join(":").trim()
-					})
-				}
-			}
-
-			const fullFunctionName = content.substring(this.startIdx, paramsOpeningBracketIdx).trim().split(" ")
-			let accessModifyer = ""
-			for (let i = 0; i < fullFunctionName.length - 1; i++) accessModifyer += (fullFunctionName[i] + " ")
-
-			let functionName = fullFunctionName[fullFunctionName.length - 1]
-
-
-			const currentMethodContext: MethodContext = {
-				context: "function",
-				name: functionName,
-				parameters: parameters,
-				return: returnType,
-				accessModifyer: accessModifyer.trim()
-			};
-
-			let co = context as ClassContext[]
-			co[co.length - 1].methods.push(currentMethodContext);
+			this.handleMethod(context, content);
 		} else {
-			//attribute
-			const equalSign = content.indexOf("=", this.startIdx) > 0 ? content.indexOf("=", this.startIdx) : Infinity
-			const semiColon = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity
-			const attributeSignatureEnd = Math.min(equalSign, semiColon)
-
-			const colon = content.indexOf(":", this.startIdx)
-			const bracket = content.indexOf("{", this.startIdx)
-
-			let attName = ""
-			let attType = "any"
-			let accessModifyer = ""
-			// if has type annotation and is not an object
-			if (colon !== -1 && colon < bracket && colon < attributeSignatureEnd) {
-				const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
-				for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
-
-				attName = fullAttName[fullAttName.length - 1]
-				attType = content.substring(colon + 1, attributeSignatureEnd)
-
-				//does not have type annotation and but initialisation
-			} else {
-				const fullAttName = content.substring(this.startIdx, colon).trim().split(" ")
-				for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += (fullAttName[i] + " ")
-
-				attName = fullAttName[fullAttName.length - 1]
-			}
-
-			const currentAttributeContext: AttributeContext = {
-				context: "variable",
-				name: attName.trim(),
-				type: attType.trim(),
-				accessModifyer: accessModifyer.trim()
-			}
-			let co = context as ClassContext[]
-			co[co.length - 1].attributes.push(currentAttributeContext)
+			this.handleVariable(context, content);
 		}
 	}
 
@@ -147,5 +54,67 @@ export class AccessModifyerToken implements Token {
 			this.type = "method";
 		}
 	}
-}
 
+	private handleMethod(context: Context[], content: string) {
+		const { parameters, returnType, paramsOpeningBracketIdx } = getFunctionMetaData(content, this.startIdx);
+
+		const fullFunctionName: string[] = content.substring(this.startIdx, paramsOpeningBracketIdx).trim().split(" ");
+		let accessModifyer = "";
+		for (let i = 0; i < fullFunctionName.length - 1; i++) {
+			accessModifyer += fullFunctionName[i] + " ";
+		}
+
+		let functionName = fullFunctionName[fullFunctionName.length - 1];
+
+		const isAsync: boolean = fullFunctionName.indexOf("async") !== -1;
+
+		const currentMethodContext: MethodContext = {
+			context: "function",
+			name: functionName,
+			parameters: parameters,
+			return: returnType,
+			accessModifyer: accessModifyer.trim(),
+			async: isAsync,
+		};
+
+		let co = context as ClassContext[];
+		co[co.length - 1].methods.push(currentMethodContext);
+	}
+
+	private handleVariable(context: Context[], content: string) {
+		const equalSign = content.indexOf("=", this.startIdx) > 0 ? content.indexOf("=", this.startIdx) : Infinity;
+		const semiColon = content.indexOf(";", this.startIdx) > 0 ? content.indexOf(";", this.startIdx) : Infinity;
+		const attributeSignatureEnd = Math.min(equalSign, semiColon);
+
+		const colon = content.indexOf(":", this.startIdx);
+		const bracket = content.indexOf("{", this.startIdx);
+
+		let attName = "";
+		let attType = "any";
+		let accessModifyer = "";
+		// if has type annotation and is not an object
+		if (colon !== -1 && colon < bracket && colon < attributeSignatureEnd) {
+			const fullAttName = content.substring(this.startIdx, colon).trim().split(" ");
+			for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += fullAttName[i] + " ";
+
+			attName = fullAttName[fullAttName.length - 1];
+			attType = content.substring(colon + 1, attributeSignatureEnd);
+
+			//does not have type annotation and but initialisation
+		} else {
+			const fullAttName = content.substring(this.startIdx, colon).trim().split(" ");
+			for (let i = 0; i < fullAttName.length - 1; i++) accessModifyer += fullAttName[i] + " ";
+
+			attName = fullAttName[fullAttName.length - 1];
+		}
+
+		const currentAttributeContext: AttributeContext = {
+			context: "variable",
+			name: attName.trim(),
+			type: attType.trim(),
+			accessModifyer: accessModifyer.trim(),
+		};
+		let co = context as ClassContext[];
+		co[co.length - 1].attributes.push(currentAttributeContext);
+	}
+}

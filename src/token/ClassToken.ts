@@ -2,7 +2,6 @@ import { Context, ClassContext } from "../Context";
 import { getClosingBracketIndex } from "../util";
 import { Token } from "./Token";
 
-
 export class ClassToken implements Token {
 	public name: string;
 	public startIdx: number;
@@ -18,24 +17,23 @@ export class ClassToken implements Token {
 
 		let idx = content.indexOf("{", this.startIdx);
 		let closingIdx = getClosingBracketIndex(idx, content);
-		this.endIdx = closingIdx// + 1
-		return this.endIdx
+		this.endIdx = closingIdx; // + 1
+		return this.endIdx;
 	}
 
-	public processToken(context: Context[], content: string): void {
-
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		const openingBracketIdx = content.indexOf("{", this.startIdx);
-		const closingBracketIdx = this.getTokenEnd(content)
-		this.endIdx = closingBracketIdx
+		const closingBracketIdx = this.getTokenEnd(content);
+		this.endIdx = closingBracketIdx;
 
-		const [className, parent] = this.processClassSignature(content, openingBracketIdx)
+		const [className, parent] = this.processClassSignature(content, openingBracketIdx);
 
 		const currentClassContext: ClassContext = {
 			context: "class",
 			name: className,
 			parent: parent,
 			attributes: [],
-			methods: []
+			methods: [],
 		};
 
 		context.push(currentClassContext);
@@ -43,7 +41,7 @@ export class ClassToken implements Token {
 
 	private processClassSignature(content: string, openingBracketIdx: number): [className: string, parent: string] {
 		const classSignature = content.substring(this.startIdx, openingBracketIdx);
-		const splittedClassSignature: string[] = classSignature.split(" ").filter(el => el);
+		const splittedClassSignature: string[] = classSignature.split(" ").filter((el) => el);
 		const className = splittedClassSignature[1];
 
 		let parent = "";
@@ -52,7 +50,6 @@ export class ClassToken implements Token {
 			parent = splittedClassSignature[3];
 		}
 
-		return [className, parent]
+		return [className, parent];
 	}
 }
-
