@@ -118,11 +118,15 @@ export function getFunctionMetaData(
 	const parameters: VariableContext[] = [];
 
 	if (paramsString.length > 0) {
-		const paramsArray = paramsString.split(",");
+		const paramsArray: string[] = paramsString
+			.replaceAll("\n", "")
+			.split(",")
+			.map((el) => el.trim())
+			.filter((el) => el);
 
 		for (const param of paramsArray) {
 			// desctructor to seperate the first part from all others - later on, the rest (pr) will be joined by ":"
-			const [p1, ...pr] = param.split(":");
+			const [p1, ...pr] = param.trim().split(":");
 
 			parameters.push({
 				context: "variable",
