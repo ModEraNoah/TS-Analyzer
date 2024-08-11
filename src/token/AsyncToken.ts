@@ -19,7 +19,7 @@ export class AsyncToken implements Token {
 		return end;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		//TODO
 		// throw new Error("Not implemented yet")
 	}

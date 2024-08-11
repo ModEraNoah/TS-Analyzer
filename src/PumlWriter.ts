@@ -18,7 +18,15 @@ export class PumlWriter {
 		for (let i = 0; i < classRelations.dependencies.length; i++) {
 			if (!isNativeType(classRelations.dependencies[i])) {
 				console.log(
-					`${classRelations.className} -> ${classRelations.dependencies[i].replace("[]", "").replace("(", "").replace(")", "").replaceAll("|", "_").replace("[", "").replace("]", "").replaceAll(" ", "").replaceAll('"', "")}`,
+					`${classRelations.className} -> ${classRelations.dependencies[i]
+						.replace("[]", "")
+						.replace("(", "")
+						.replace(")", "")
+						.replaceAll("|", "_")
+						.replace("[", "")
+						.replace("]", "")
+						.replaceAll(" ", "")
+						.replaceAll('"', "")}`,
 				);
 			}
 		}
@@ -30,7 +38,7 @@ export class PumlWriter {
 		classContext.attributes.forEach((attribute) => {
 			let parameterString = "";
 			console.log(
-				`${this.translateAccessModifyer(attribute.accessModifyer)} ${attribute.name} : ${attribute.type}`,
+				`${this.translateAccessModifyer(attribute.accessModifyer)} ${attribute.name}: ${attribute.type.trim()}`,
 			);
 		});
 
@@ -44,7 +52,9 @@ export class PumlWriter {
 				}
 			}
 			console.log(
-				`${this.translateAccessModifyer(method.accessModifyer)} ${method.name} (${parameterString}): ${method.return}`,
+				`${this.translateAccessModifyer(method.accessModifyer)} ${method.async ? "<<async>>" : ""}${
+					method.name
+				}(${parameterString}): ${method.return}`,
 			);
 		});
 

@@ -27,7 +27,7 @@ export class AccessModifyerToken implements Token {
 		}
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		this.specifyType(content);
 
 		if (this.type === "method") {
@@ -58,11 +58,15 @@ export class AccessModifyerToken implements Token {
 	private handleMethod(context: Context[], content: string) {
 		const { parameters, returnType, paramsOpeningBracketIdx } = getFunctionMetaData(content, this.startIdx);
 
-		const fullFunctionName = content.substring(this.startIdx, paramsOpeningBracketIdx).trim().split(" ");
+		const fullFunctionName: string[] = content.substring(this.startIdx, paramsOpeningBracketIdx).trim().split(" ");
 		let accessModifyer = "";
-		for (let i = 0; i < fullFunctionName.length - 1; i++) accessModifyer += fullFunctionName[i] + " ";
+		for (let i = 0; i < fullFunctionName.length - 1; i++) {
+			accessModifyer += fullFunctionName[i] + " ";
+		}
 
 		let functionName = fullFunctionName[fullFunctionName.length - 1];
+
+		const isAsync: boolean = fullFunctionName.indexOf("async") !== -1;
 
 		const currentMethodContext: MethodContext = {
 			context: "function",
@@ -70,6 +74,7 @@ export class AccessModifyerToken implements Token {
 			parameters: parameters,
 			return: returnType,
 			accessModifyer: accessModifyer.trim(),
+			async: isAsync,
 		};
 
 		let co = context as ClassContext[];

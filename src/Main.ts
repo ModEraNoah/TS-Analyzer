@@ -26,19 +26,21 @@ export class Main {
 	public main() {
 		let currentCharIndex = 0;
 		let currentToken: Token;
+		let previousToken: Token | undefined = undefined;
 
 		// push classes, functions and variables into context
 		while (currentCharIndex >= 0 && currentCharIndex < this.fileContent.length - 1) {
 			currentToken = this.tokenizer.getNextToken(currentCharIndex, this.fileContent);
 
 			let contextArray = this.getContextArrayToUse(currentToken);
-			currentToken.processToken(contextArray, this.fileContent);
+			currentToken.processToken(contextArray, this.fileContent, previousToken);
 
 			currentCharIndex = currentToken.getTokenEnd(this.fileContent) + 1;
 
 			if (currentToken instanceof ClassToken) {
 				this.processClass(currentToken);
 			}
+			previousToken = currentToken;
 		}
 	}
 
@@ -73,18 +75,20 @@ export class Main {
 
 		let currentCharIndex = 0;
 		let subToken: Token;
+		let previousSubToken: Token | undefined = undefined;
 		while (currentCharIndex >= 0 && currentCharIndex < classBody.length) {
 			subToken = this.tokenizer.getNextToken(currentCharIndex, classBody);
 
 			let contextArray = this.getContextArrayToUse(subToken);
 			if (subToken.constructor.name === "UnknownToken") {
 				const unknownToken = subToken as UnknownToken;
-				unknownToken.processToken(contextArray, classBody, true);
+				unknownToken.processToken(contextArray, classBody, previousSubToken, true);
 			} else {
-				subToken.processToken(contextArray, classBody);
+				subToken.processToken(contextArray, classBody, previousSubToken);
 			}
 
 			currentCharIndex = subToken.getTokenEnd(classBody) + 1;
+			previousSubToken = subToken;
 		}
 	}
 }

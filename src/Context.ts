@@ -13,6 +13,7 @@ export interface FunctionContext {
 	name: string;
 	parameters: VariableContext[];
 	return: string;
+	async: boolean;
 }
 
 export interface ClassContext {

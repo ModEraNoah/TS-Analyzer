@@ -17,7 +17,12 @@ export class UnknownToken implements Token {
 		return this.startIdx + 1;
 	}
 
-	public processToken(context: Context[], content: string, isClass?: boolean): void {
+	public processToken(
+		context: Context[],
+		content: string,
+		previousToken: Token | undefined,
+		isClass?: boolean,
+	): void {
 		if (isClass) {
 			this.endIdx = content.indexOf(";", this.startIdx);
 			//TODO: wenn funktion ohne accessmodifyer, dann nicht nach ";" suchen, sondern ob { vor ; kommt und ob vielleicht kein ";" vorkommt sondern newline

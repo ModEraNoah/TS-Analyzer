@@ -22,7 +22,7 @@ export class ObjectToken implements Token {
 		return closingBracket;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		//TODO
 	}
 }

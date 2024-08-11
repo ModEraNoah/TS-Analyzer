@@ -18,7 +18,7 @@ export class InterfaceToken implements Token {
 		return this.endIdx;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		const interfaceStart = content.indexOf("{", this.startIdx);
 		const interfaceEnd = this.getTokenEnd(content);
 
@@ -41,7 +41,6 @@ export class InterfaceToken implements Token {
 			.split(";")
 			.map((el) => el.trim().replaceAll("  ", "").replaceAll(",)", ")"))
 			.filter((el) => el);
-		console.log("interfaceContent:", interfaceContent);
 		let attributes: AttributeContext[] = this.getInterfaceAttributes(interfaceContent);
 
 		context.push({
