@@ -18,16 +18,22 @@ export class FunctionToken implements Token {
 		return this.endIdx;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		const { parameters, returnType, paramsOpeningBracketIdx } = getFunctionMetaData(content, this.startIdx);
 
 		const functionName = content.substring(this.startIdx, paramsOpeningBracketIdx).split("function")[1].trim();
+
+		let isAsync: boolean = false;
+		if (previousToken) {
+			isAsync = previousToken.constructor.name === "AsyncToken";
+		}
 
 		const currentFunctionContext: FunctionContext = {
 			context: "function",
 			name: functionName,
 			parameters: parameters,
 			return: returnType,
+			async: isAsync,
 		};
 
 		context.push(currentFunctionContext);

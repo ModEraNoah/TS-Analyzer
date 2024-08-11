@@ -21,7 +21,7 @@ export class ClassToken implements Token {
 		return this.endIdx;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		const openingBracketIdx = content.indexOf("{", this.startIdx);
 		const closingBracketIdx = this.getTokenEnd(content);
 		this.endIdx = closingBracketIdx;

@@ -16,7 +16,7 @@ export class MlCommentToken implements Token {
 		return this.endIdx;
 	}
 
-	public processToken(context: Context[], content: string): void {
+	public processToken(context: Context[], content: string, previousToken: Token | undefined): void {
 		//
 	}
 }
