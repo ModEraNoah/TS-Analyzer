@@ -36,9 +36,12 @@ export class InterfaceToken implements Token {
 
 		const interfaceContent: string[] = content
 			.substring(interfaceStart + 1, interfaceEnd)
+			.replaceAll(/(\/\/.*\n)/g, "")
 			.replaceAll("\n", "")
 			.split(";")
+			.map((el) => el.trim().replaceAll("  ", "").replaceAll(",)", ")"))
 			.filter((el) => el);
+		console.log("interfaceContent:", interfaceContent);
 		let attributes: AttributeContext[] = this.getInterfaceAttributes(interfaceContent);
 
 		context.push({

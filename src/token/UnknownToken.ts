@@ -35,8 +35,9 @@ export class UnknownToken implements Token {
 				type: type.join(":"),
 				accessModifyer: "public",
 			});
+		} else {
+			//TODO
+			console.error("unknown token with startIdx", this.startIdx, ":", content[this.startIdx]);
 		}
-		//TODO
-		console.error("unknown token with startIdx", this.startIdx, ":", content[this.startIdx]);
 	}
 }
