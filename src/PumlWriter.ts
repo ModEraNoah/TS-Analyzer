@@ -17,17 +17,21 @@ export class PumlWriter {
 
 		for (let i = 0; i < classRelations.dependencies.length; i++) {
 			if (!isNativeType(classRelations.dependencies[i])) {
-				console.log(
-					`${classRelations.className} -> ${classRelations.dependencies[i]
-						.replace("[]", "")
-						.replace("(", "")
-						.replace(")", "")
-						.replaceAll("|", "_")
-						.replace("[", "")
-						.replace("]", "")
-						.replaceAll(" ", "")
-						.replaceAll('"', "")}`,
-				);
+				const dependencies: string[] = classRelations.dependencies[i]
+					.split("|")
+					.map((el) => el.trim())
+					.filter((el) => el);
+				for (const dependency of dependencies) {
+					console.log(
+						`${classRelations.className} -> ${dependency
+							// classRelations.dependencies[i]
+							.replace("[]", "")
+							.replace("[", "")
+							.replace("]", "")
+							.replaceAll(" ", "")
+							.replaceAll('"', "")}`,
+					);
+				}
 			}
 		}
 	}

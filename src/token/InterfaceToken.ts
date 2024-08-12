@@ -36,6 +36,7 @@ export class InterfaceToken implements Token {
 
 		const interfaceContent: string[] = content
 			.substring(interfaceStart + 1, interfaceEnd)
+			// remove comments out of interface
 			.replaceAll(/(\/\/.*\n)/g, "")
 			.replaceAll("\n", "")
 			.split(";")
