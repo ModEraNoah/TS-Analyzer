@@ -1,5 +1,5 @@
 import { Context, FunctionContext } from "../Context";
-import { getClosingBracketIndex, getFunctionMetaData } from "../util";
+import { getClosingBracketIndex, getFunctionMetaData, getRoundClosingBracketIndex } from "../util";
 import { Token } from "./Token";
 
 export class FunctionToken implements Token {
@@ -13,8 +13,24 @@ export class FunctionToken implements Token {
 	}
 
 	public getTokenEnd(content: string): number {
-		let idx = content.indexOf("{", this.startIdx);
-		this.endIdx = getClosingBracketIndex(idx, content);
+		const paramsBracketIdx = content.indexOf("(", this.startIdx);
+		const paramsClosingBracketIdx = getRoundClosingBracketIndex(paramsBracketIdx, content);
+
+		const typeColonIdx = content.indexOf(":", paramsClosingBracketIdx);
+		if (typeColonIdx === -1) {
+			let idx = content.indexOf("{", this.startIdx);
+			this.endIdx = getClosingBracketIndex(idx, content);
+		} else {
+			const openBracketIdx = content.indexOf("{", paramsClosingBracketIdx);
+			const temp = content.substring(typeColonIdx + 1, openBracketIdx).trim();
+			if (temp.length === 0) {
+				const functionStartIdx = content.indexOf("{", getClosingBracketIndex(openBracketIdx, content));
+				this.endIdx = getClosingBracketIndex(functionStartIdx, content);
+			} else {
+				let idx = content.indexOf("{", this.startIdx);
+				this.endIdx = getClosingBracketIndex(idx, content);
+			}
+		}
 		return this.endIdx;
 	}
 

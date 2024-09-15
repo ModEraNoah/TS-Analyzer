@@ -56,7 +56,14 @@ export class UnknownToken implements Token {
 			}
 		} else {
 			//TODO
-			console.error("unknown token with startIdx", this.startIdx, ":", content[this.startIdx]);
+			console.error(
+				"unknown token with startIdx",
+				this.startIdx,
+				":",
+				content[this.startIdx],
+				"previous token:",
+				previousToken,
+			);
 		}
 	}
 
