@@ -52,6 +52,7 @@ export class Main {
 			//
 			case "ClassToken":
 			case "InterfaceToken":
+			case "TypeToken":
 			case "UnknownToken":
 				return this.context.classes;
 			case "ExportToken":

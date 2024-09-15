@@ -13,6 +13,7 @@ import { UnknownToken } from "./token/UnknownToken";
 import { WhitespaceToken } from "./token/WhitespaceToken";
 import { ConstructorToken } from "./token/Constructor";
 import { InterfaceToken } from "./token/InterfaceToken";
+import { TypeToken } from "./token/TypeToken";
 
 export interface ITokenizer {
 	getNextToken: (currentIndex: number, content: string) => Token;
@@ -61,6 +62,8 @@ export class Tokenizer implements ITokenizer {
 				return new ConstructorToken(nextWordStart);
 			case "interface":
 				return new InterfaceToken(nextWordStart);
+			case "type":
+				return new TypeToken(nextWordStart);
 			default:
 				return new UnknownToken(nextWordStart);
 		}
