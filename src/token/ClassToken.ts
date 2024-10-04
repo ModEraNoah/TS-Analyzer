@@ -26,7 +26,9 @@ export class ClassToken implements Token {
 		const closingBracketIdx = this.getTokenEnd(content);
 		this.endIdx = closingBracketIdx;
 
-		const [className, parent] = this.processClassSignature(content, openingBracketIdx);
+		let [className, parent] = this.processClassSignature(content, openingBracketIdx);
+
+		if (previousToken?.constructor.name === "AbstractToken") className = "<<abstract>> " + className;
 
 		const currentClassContext: ClassContext = {
 			context: "class",
