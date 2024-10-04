@@ -1,5 +1,5 @@
-import { AttributeContext, ClassContext, Context } from "../Context";
-import { getClosingBracketIndex } from "../util";
+import { AttributeContext, ClassContext, Context, MethodContext } from "../Context";
+import { getClosingBracketIndex, getFunctionMetaData } from "../util";
 import { Token } from "./Token";
 
 export class InterfaceToken implements Token {
@@ -42,29 +42,56 @@ export class InterfaceToken implements Token {
 			.split(";")
 			.map((el) => el.trim().replaceAll("  ", "").replaceAll(",)", ")"))
 			.filter((el) => el);
-		let attributes: AttributeContext[] = this.getInterfaceAttributes(interfaceContent);
+		let { attributes, methods } = this.getInterfaceAttributesAndMethods(interfaceContent);
 
 		context.push({
 			context: "class",
 			name: interfaceName,
 			parent: interfaceParent,
 			attributes: attributes,
-			methods: [],
+			methods: methods,
 		});
 	}
 
-	private getInterfaceAttributes(interfaceContent: string[]): AttributeContext[] {
+	private getInterfaceAttributesAndMethods(interfaceContent: string[]): {
+		attributes: AttributeContext[];
+		methods: MethodContext[];
+	} {
 		const attributes: AttributeContext[] = [];
+		const methods: MethodContext[] = [];
 		for (const attribute of interfaceContent) {
-			const [name, ...type] = attribute.split(":");
-			const att: AttributeContext = {
-				context: "variable",
-				name: name.trim(),
-				type: type.join(":").trim(),
-				accessModifyer: "public",
-			};
-			attributes.push(att);
+			if (this.isMethod(attribute)) {
+				const { parameters, returnType } = getFunctionMetaData(attribute, 0);
+				const [name] = attribute.split("(");
+				const method: MethodContext = {
+					context: "function",
+					name: name,
+					parameters: parameters,
+					return: returnType,
+					async: attribute.trim().startsWith("async"),
+					accessModifyer: "public",
+				};
+				methods.push(method);
+			} else {
+				const [name, ...type] = attribute.split(":");
+				const att: AttributeContext = {
+					context: "variable",
+					name: name.trim(),
+					type: type.join(":").trim(),
+					accessModifyer: "public",
+				};
+				attributes.push(att);
+			}
 		}
-		return attributes;
+		return { attributes, methods };
+	}
+
+	private isMethod(attribute: string): boolean {
+		const nextRoundBracketIdx: number = attribute.indexOf("(");
+		if (nextRoundBracketIdx !== -1 && nextRoundBracketIdx < attribute.indexOf(":")) {
+			return true;
+		}
+
+		return false;
 	}
 }
